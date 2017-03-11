@@ -50,7 +50,11 @@ ssize_t onebyte_read(struct file *filep, char *buf, size_t count, loff_t *f_pos)
 ssize_t onebyte_write(struct file *filep, const char *buf, size_t count, loff_t *f_pos)
 {
   copy_from_user(onebyte_data, buf, 1);
-  return 1;
+  if (count > 1) {
+    printk(KERN_INFO "onebyte: try to write %zu bytes %s\n", count, buf);
+    return -ENOSPC;
+  }
+  return count;
 }
 
 static int onebyte_init(void)
